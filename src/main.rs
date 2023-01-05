@@ -33,7 +33,7 @@ struct Args {
     bind: Option<String>,
 
     /// File or folder to serve
-    #[clap(value_name = "ASSET", index = 1, required = false)]
+    #[clap(value_name = "ASSET", index = 1, required = false, default_value = ".")]
     asset: String,
 
     /// Specify alternate port
