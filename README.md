@@ -22,7 +22,6 @@ Options:
 ### 1. Serve static content
 
 - If no arguments are specified, it serves files from the current directory.
-  in [config.yaml](config.yaml).
 
 - If a file is specified as first argument, the option for copying the download command is provided based on the file
   extension:

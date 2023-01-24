@@ -1,11 +1,13 @@
 #![feature(absolute_path)]
 
+pub extern crate mime;
 extern crate rouille;
 
 use std::{fs, io};
 use std::collections::HashMap;
 use std::error::Error;
 use std::fmt::Debug;
+use std::fs::File;
 use std::io::{Read, Write};
 use std::net::TcpListener;
 use std::path::PathBuf;
@@ -309,9 +311,27 @@ fn send_file_as_response(path: &PathBuf, replace_map: &Vec<(String, String)>) ->
             Response::text(text)
         }
         Err(_) => {
-            let mut r_map = HashMap::new();
-            r_map.insert("error", "error reading file");
-            Response::json(&r_map)
+            match File::open(path) {
+                Ok(f) => {
+                    let c = mime_guess::from_path(path);
+
+                    let mut res = String::new();
+
+                    if c.first().is_some() {
+                        res = c.first().unwrap().to_string();
+                    } else {
+                        res.push_str("application/binary");
+                    }
+
+                    Response::from_file(res, f)
+                }
+                Err(e) => {
+                    let mut r_map = HashMap::new();
+                    r_map.insert("error", "error reading file");
+
+                    Response::json(&r_map)
+                }
+            }
         }
     }
 }
